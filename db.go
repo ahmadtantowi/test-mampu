@@ -29,8 +29,7 @@ CREATE TABLE transactions (
     user_id INT REFERENCES users(id),
     amount DECIMAL(15, 2) NOT NULL,
     transaction_type transaction_type NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 INSERT INTO users (id, username) VALUES
@@ -59,13 +58,13 @@ func ConnectDB(logger *slog.Logger) (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	// logger.Info("applying database schema...")
-	// res, err := db.MustExec(schema).RowsAffected()
-	// if err != nil {
-	// 	logger.Error("failed to apply database schema", "error", err)
-	// 	return nil, err
-	// }
-	// logger.Info("database schema applied", "rows_affected", res)
+	logger.Info("applying database schema...")
+	res, err := db.MustExec(schema).RowsAffected()
+	if err != nil {
+		logger.Error("failed to apply database schema", "error", err)
+		return nil, err
+	}
+	logger.Info("database schema applied", "rows_affected", res)
 
 	return db, nil
 }
