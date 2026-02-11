@@ -25,6 +25,7 @@ func main() {
 
 	api := NewWalletApi(logger, db)
 	mux.HandleFunc("GET /users/{id}/balance", api.GetBalanceHandler)
+	mux.HandleFunc("POST /users/{id}/withdraw", api.WithdrawHandler)
 
 	logger.Info(fmt.Sprintf("server started on port %d", port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
