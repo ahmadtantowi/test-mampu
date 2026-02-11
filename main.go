@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -8,12 +9,13 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
 	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
 	})
 	logger := slog.New(logHandler)
 
-	db, err := ConnectDB(logger)
+	db, err := ConnectDB(ctx, logger)
 	if err != nil {
 		logger.Error("failed to connect to database", "error", err)
 		os.Exit(1)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -46,8 +47,8 @@ const (
 	driver  = "pgx"
 )
 
-func ConnectDB(logger *slog.Logger) (*sqlx.DB, error) {
-	db, err := sqlx.Connect(driver, connstr)
+func ConnectDB(ctx context.Context, logger *slog.Logger) (*sqlx.DB, error) {
+	db, err := sqlx.ConnectContext(ctx, driver, connstr)
 	if err != nil {
 		logger.Error("failed to connect to database", "error", err)
 		return nil, err
@@ -59,7 +60,7 @@ func ConnectDB(logger *slog.Logger) (*sqlx.DB, error) {
 	}
 
 	logger.Info("applying database schema...")
-	res, err := db.Exec(schema)
+	res, err := db.ExecContext(ctx, schema)
 	if err != nil {
 		logger.Warn("failed to apply database schema", "error", err)
 	} else {
