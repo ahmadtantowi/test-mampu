@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -29,12 +30,11 @@ func (api *WalletApi) GetBalanceHandler(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(map[string]float64{"balance": balance})
 }
 
-func (api *WalletApi) getBalance(userId int) (float64, error) {
+func (api *WalletApi) getBalance(ctx context.Context, userId int) (float64, error) {
 	const query = `SELECT balance FROM wallets w WHERE w.user_id = $1`
 
 	var balance float64
-	err := api.db.Get(&balance, query, userId)
-	if err != nil {
+	if err := api.db.QueryRowxContext(ctx, query, userId).Scan(&balance); err != nil {
 		return 0, err
 	}
 
