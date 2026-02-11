@@ -19,7 +19,7 @@ func (api *WalletApi) GetBalanceHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	balance, err := api.getBalance(userId)
+	balance, err := api.getBalance(r.Context(), userId)
 	if err != nil {
 		api.logger.Error("failed to get user balance", "error", err)
 		sendJSONError(w, http.StatusInternalServerError, "failed to get user balance")
