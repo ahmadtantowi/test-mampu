@@ -59,12 +59,12 @@ func ConnectDB(logger *slog.Logger) (*sqlx.DB, error) {
 	}
 
 	logger.Info("applying database schema...")
-	res, err := db.MustExec(schema).RowsAffected()
+	res, err := db.Exec(schema)
 	if err != nil {
-		logger.Error("failed to apply database schema", "error", err)
-		return nil, err
+		logger.Warn("failed to apply database schema", "error", err)
+	} else {
+		logger.Info("database schema applied", "rows_affected", res)
 	}
-	logger.Info("database schema applied", "rows_affected", res)
 
 	return db, nil
 }
