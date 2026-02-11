@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -42,13 +43,13 @@ INSERT INTO wallets (user_id, balance) VALUES
 	(2, 500000);
 `
 
-const (
-	connstr = "postgres://postgres:abcde@localhost:5432/test_mampu?sslmode=disable"
-	driver  = "pgx"
-)
-
 func ConnectDB(ctx context.Context, logger *slog.Logger) (*sqlx.DB, error) {
-	db, err := sqlx.ConnectContext(ctx, driver, connstr)
+	connstr := "postgres://postgres:abcde@localhost:5432/test_mampu?sslmode=disable"
+	if dburl := os.Getenv("DB_URL"); dburl != "" {
+		connstr = dburl
+	}
+
+	db, err := sqlx.ConnectContext(ctx, "pgx", connstr)
 	if err != nil {
 		logger.Error("failed to connect to database", "error", err)
 		return nil, err
