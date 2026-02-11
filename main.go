@@ -23,6 +23,9 @@ func main() {
 	const port = 8080
 	mux := http.NewServeMux()
 
+	api := NewWalletApi(logger, db)
+	mux.HandleFunc("GET /users/{id}/balance", api.GetBalanceHandler)
+
 	logger.Info(fmt.Sprintf("server started on port %d", port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
 		logger.Error("failed to start server", "error", err)
